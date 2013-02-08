@@ -10,7 +10,7 @@ Author URI: http://drzaus.com
 Changelog:
 	1.4 - forked from cf7-3rdparty.  Removed 'hidden field plugin'.
 	1.4.1 - minor cleanup, bugfixes; added 'label' and 'drag' columns to admin ui.
-
+	1.4.2 - bugfixes (CF7, empty admin sections), admin JS cleanup, timeout
 */
 
 //declare to instantiate
@@ -34,7 +34,7 @@ class Forms3rdPartyIntegration {
 	 * Version of current plugin -- match it to the comment
 	 * @var string
 	 */
-	const pluginVersion = '1.4.1';
+	const pluginVersion = '1.4.2';
 
 	
 	/**
@@ -87,7 +87,7 @@ class Forms3rdPartyIntegration {
 		$this->N = __CLASS__;
 		
 		add_action( 'admin_menu', array( &$this, 'admin_init' ), 20 ); // late, so it'll attach menus farther down
-		add_action( 'init', array( &$this, 'init' ) );
+		add_action( 'init', array( &$this, 'init' ) ); // want to run late, but can't because it misses CF7 onsend?
 	} // function
 
 	function admin_init() {
@@ -342,8 +342,7 @@ class Forms3rdPartyIntegration {
 		//stop mail from being sent?
 		#$cf7->skip_mail = true;
 		
-		#_log(__CLASS__.'::'.__FUNCTION__.' -- mapping posted data', $cf7->posted_data);
-		#_log('contact form 7 object', $cf7);
+		### _log(__CLASS__.'::'.__FUNCTION__.' -- form object', $form);
 		
 		$submission = false;
 
@@ -351,6 +350,8 @@ class Forms3rdPartyIntegration {
 		foreach($settings as $sid => $service):
 			//check if we're supposed to use this service
 			$use_this_form = apply_filters($this->N('use_form'), false, $form, $sid, $service['forms']);
+
+			### _log('are we using this form?', $use_this_form ? "YES" : "NO", $sid, $service);
 			if( !$use_this_form ) continue;
 			
 			// only build the submission once; we've moved the call here so it respects use_form
