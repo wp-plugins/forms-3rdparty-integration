@@ -357,7 +357,7 @@ class Forms3rdPartyIntegration {
 			// only build the submission once; we've moved the call here so it respects use_form
 			if(false === $submission) {
 				// alias to submission data - in GF it's $_POST, in CF7 it's $cf7->posted_data
-				$submission = apply_filters($this->N('get_submission'), array(), &$form);
+				$submission = apply_filters($this->N('get_submission'), array(), $form);
 			}
 
 			$post = array();
