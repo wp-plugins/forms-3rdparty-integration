@@ -181,7 +181,7 @@ class Forms3rdPartyIntegration {
 	 */
 	function add_admin_headers(){
 		
-		wp_enqueue_script($this->N('admin'), plugins_url('plugin.admin.js', __FILE__), array('jquery'), self::pluginVersion, true);
+		wp_enqueue_script($this->N('admin'), plugins_url('plugin.admin.js', __FILE__), array('jquery', 'jquery-ui-sortable'), self::pluginVersion, true);
 		wp_localize_script($this->N('admin'), $this->N('admin'), array(
 			'N' => $this->N()
 		));

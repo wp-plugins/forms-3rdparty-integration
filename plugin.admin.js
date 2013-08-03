@@ -66,6 +66,9 @@
 				$clone.find('tr.fields').slice(1).empty().remove(); // only save the first row
 				var $title = $clone.find('h3 span:last');
 				$title.html( $title.html().split(':')[0] );
+
+				// toggle hooks appropriately
+				$clone.find('.hook-example').removeClass('collapsed');
 				lib.hookToggleInit( $clone.find('input.hook') );
 				
 				
@@ -103,7 +106,7 @@
 		,
 		hookToggleInit: function($input) {
 			/// // should fire appropriate toggle action to close if option is disabled
-			if(!$input.is(':checked')) $input.trigger('click');
+			$input.trigger('change');
 		}//--	fn	hookToggleInit
 	};
 
@@ -115,6 +118,8 @@
 
 		// clone / delete row or metabox, toggle container or sibling, etc
 		$plugin.on('click', '.actn', lib.action);
+		// checkbox
+		$plugin.on('change', '.change-actn', lib.action); // custom target to avoid checkbox pitfall...ugh
 
 		//collapse all metabox sections initially
 		$plugin.find('div.postbox')
@@ -124,8 +129,23 @@
 
 		// toggle hooks element
 		$plugin.find('input.hook').each(function(i,o) {
-			lib.hookToggleInit($(o));
+			var $o = $(o);
+			if(!$o.is(':checked')) lib.hookToggleInit($o);
 		});
+
+		// sortable
+		$plugin.find('table.mappings tbody').sortable({
+			// fix width -- http://www.foliotek.com/devblog/make-table-rows-sortable-using-jquery-ui-sortable/
+			helper: function(e, ui) {
+					ui.children().each(function() {
+						$(this).width($(this).width());
+					});
+					return ui;
+				}
+			, placeholder: "ui-state-highlight"
+		}).disableSelection()
+			.end()
+			.find('div.meta-box-sortables div.meta-box').sortable({distance:30, tolerance:'pointer'});
 
 	});
 })(jQuery);

@@ -131,7 +131,7 @@
 					</div>
 					<div class="field">
 						<label for="hook-<?php echo $eid?>">Allow Hooks?</label>
-						<input id="hook-<?php echo $eid?>" type="checkbox" class="checkbox hook actn" data-actn="toggle-sibling" data-after=".hook-example" data-rel=".postbox" name="<?php echo $P?>[<?php echo $eid?>][hook]" value="true"<?php if(isset($entity['hook']) && $entity['hook']) echo ' checked="checked"'; ?> />
+						<input id="hook-<?php echo $eid?>" type="checkbox" class="checkbox hook change-actn" data-actn="toggle-sibling" data-after=".hook-example" data-rel=".postbox" name="<?php echo $P?>[<?php echo $eid?>][hook]" value="true"<?php if(isset($entity['hook']) && $entity['hook']) echo ' checked="checked"'; ?> />
 						<em class="description"><?php _e('Allow hooks - see bottom of section for example', $P);?>:</em>
 					</div>
 				</div>
@@ -186,7 +186,7 @@
 							<label for="mapping-<?php echo $eid?>-<?php echo $pairNum?>b" class="invisible">3rd-party Field:</label>
 							<input id="mapping-<?php echo $eid?>-<?php echo $pairNum?>b" type="text" class="text b" name="<?php echo $P?>[<?php echo $eid?>][mapping][<?php echo $pairNum?>][<?php echo self::PARAM_3RD ?>]" value="<?php echo esc_attr($pair[self::PARAM_3RD])?>" />
 						</td>
-						<td headers="th-<?php echo $eid?>-action" class="thin drag-handle icon">
+						<td headers="th-<?php echo $eid?>-action" class="thin drag-handle icon row-actns">
 							<a href="#" title="<?php _e('Delete'); ?>" class="minus actn" data-actn="remove" data-after="row" data-rel="tr.fields"><?php _e('Delete', $P);?></a>
 							<?php
 							$pairNum++;
@@ -205,7 +205,7 @@
 				</table>
 			</fieldset><!-- Mappings -->
 			
-			<section class="info example hook-example<?php if( ! isset($entity['hook']) || ! $entity['hook'] ){ echo ' collapsed'; } ?>">
+			<section class="info example hook-example">
 			<fieldset><legend><span>Hooks</span></legend>
 				<div class="inside">
 					<div class="description">

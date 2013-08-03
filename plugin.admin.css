@@ -22,6 +22,8 @@ table.mappings caption { font-style:italic; color:#888; margin-bottom:0.2em; }
 table.mappings input { width:100%; }
 table.mappings .thin { width:4em; }
 table.mappings .drag-handle { padding:0.5em;}
+/* sortable */
+.ui-state-highlight { height: 2.5em; line-height: 1.2em; }
 
 a.actn { text-decoration: none; }
 
