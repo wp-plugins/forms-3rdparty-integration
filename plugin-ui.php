@@ -80,7 +80,7 @@
 				, 'success'=>''
 				, 'forms' => array()
 				, 'hook' => false
-				, 'timeout' => 10
+				, 'timeout' => self::DEFAULT_TIMEOUT
 				, 'mapping' => array()
 				));
 		}
@@ -127,7 +127,7 @@
 					<div class="field">
 						<label for="timeout-<?php echo $eid?>">Request timeout</label>
 						<input id="timout-<?php echo $eid?>" type="text" class="text" name="<?php echo $P?>[<?php echo $eid?>][timeout]" value="<?php echo esc_attr($entity['timeout'])?>" />
-						<em class="description"><?php _e('How long (in seconds) to attempt the 3rd-party remote request before giving up.', $P);?>.</em>
+						<em class="description"><?php echo sprintf(__('How long (in seconds) to attempt the 3rd-party remote request before giving up.  Default %d', $P), self::DEFAULT_TIMEOUT);?>.</em>
 					</div>
 					<div class="field">
 						<label for="hook-<?php echo $eid?>">Allow Hooks?</label>
@@ -187,12 +187,12 @@
 							<input id="mapping-<?php echo $eid?>-<?php echo $pairNum?>b" type="text" class="text b" name="<?php echo $P?>[<?php echo $eid?>][mapping][<?php echo $pairNum?>][<?php echo self::PARAM_3RD ?>]" value="<?php echo esc_attr($pair[self::PARAM_3RD])?>" />
 						</td>
 						<td headers="th-<?php echo $eid?>-action" class="thin drag-handle icon">
-							<a href="#" title="<?php _e('Delete'); ?>" class="minus actn" data-actn="remove" data-after="row" rel="tr.fields"><?php _e('Delete', $P);?></a>
+							<a href="#" title="<?php _e('Delete'); ?>" class="minus actn" data-actn="remove" data-after="row" data-rel="tr.fields"><?php _e('Delete', $P);?></a>
 							<?php
 							$pairNum++;
 							#if( $pairNum == $numPairs):
 								?>
-								<a href="#" title="<?php _e('Add Another'); ?>" class="plus actn" data-actn="clone" data-after="row" rel="tr.fields"><?php _e('Add Another', $P);?></a>
+								<a href="#" title="<?php _e('Add Another'); ?>" class="plus actn" data-actn="clone" data-after="row" data-rel="tr.fields"><?php _e('Add Another', $P);?></a>
 								<?php
 							#endif;	//numPairs countdown
 							?>
@@ -205,7 +205,7 @@
 				</table>
 			</fieldset><!-- Mappings -->
 			
-			<section class="info example hook-example"<?php if( ! isset($entity['hook']) || ! $entity['hook'] ){ echo ' style="display:none;"'; } ?>>
+			<section class="info example hook-example<?php if( ! isset($entity['hook']) || ! $entity['hook'] ){ echo ' collapsed'; } ?>">
 			<fieldset><legend><span>Hooks</span></legend>
 				<div class="inside">
 					<div class="description">
@@ -227,7 +227,8 @@
 			</section>
 
 			<span class="button"><a href="#" class="actn" data-actn="remove" data-after="metabox" data-rel="div.meta-box">Delete Service</a></span>
-			
+			<span class="button"><a href="#" class="actn" data-actn="clone" data-after="metabox" data-rel="div.meta-box">Add Another Service</a></span>
+
 			
 			</div><?php /*-- end div.description-body inside  --*/ ?>
 			
@@ -238,7 +239,6 @@
 		?>
 
 			<div class="buttons">
-				<span class="button"><a href="#" class="actn" data-actn="clone" data-after="metabox" data-rel="div.meta-box:last">Add Another Service</a></span>
 				<input type="submit" id="submit" name="submit" value="Save" />
 			</div>
 				

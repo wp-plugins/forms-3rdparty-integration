@@ -58,14 +58,53 @@
 		,
 		afterClone: {
 			row: function($target, $clone, newid) {
-				lib.updateClonedRow(count, $clone, /(mapping\]\[)([\d])/);
-
+				lib.updateClonedRow(newid, $clone, /(mapping\]\[)([\d])/);
 			}//--	fn	afterClone.row
 			,
 			metabox: function($target, $clone, newid) {
-
+				//delete extra rows, fix title
+				$clone.find('tr.fields').slice(1).empty().remove(); // only save the first row
+				var $title = $clone.find('h3 span:last');
+				$title.html( $title.html().split(':')[0] );
+				lib.hookToggleInit( $clone.find('input.hook') );
+				
+				
+				//reset clone values and update indices
+				lib.updateClonedRow(newid, $clone, /(\[)([\d])/);
 			}//--	fn	afterClone.metabox
 		}//--	afterClone
+		,
+		updateClonedRow: function(newid, $clone, regex) {
+			//reset clone values and update indices
+			$clone.find('input,select').each(function(i, o){
+				var $o = $(o)
+					, id = $o.attr('id').split('-')
+					, name = $o.attr('name')
+					;
+				
+				$o.attr('id', id[0]+'-'+newid);
+				$o.attr('name', name.replace(regex, '$1'+newid));
+				
+				//reset values
+				if( $o.attr('type') != 'checkbox' ){
+					$o.val('');
+				}
+				else {
+					$o.removeAttr('checked');
+				}
+			});
+			$clone.find('label').each(function(i, o){
+				var $o = $(o);
+				
+				//set the for equal to its closest input's id
+				$o.attr('for', $o.siblings('input').attr('id'));
+			});
+		}//--	fn	lib.updateClonedRow
+		,
+		hookToggleInit: function($input) {
+			/// // should fire appropriate toggle action to close if option is disabled
+			if(!$input.is(':checked')) $input.trigger('click');
+		}//--	fn	hookToggleInit
 	};
 
 	$(function() {
@@ -85,9 +124,7 @@
 
 		// toggle hooks element
 		$plugin.find('input.hook').each(function(i,o) {
-			var $input = $(o);
-
-			if('checked' != $input.attr('checked')) $input.trigger('click'); // should fire appropriate toggle action to close if option is disabled
+			lib.hookToggleInit($(o));
 		});
 
 	});

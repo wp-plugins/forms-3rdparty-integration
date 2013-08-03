@@ -69,6 +69,11 @@ class Forms3rdPartyIntegration {
 	const PARAM_3RD = '3rd';
 
 	/**
+	 * How long (seconds) before considering timeout
+	 */
+	const DEFAULT_TIMEOUT = 10;
+
+	/**
 	 * Singleton
 	 * @var object
 	 */
@@ -120,7 +125,7 @@ class Forms3rdPartyIntegration {
 					, 'success'=>''
 					, 'forms' => array()
 					, 'hook' => false
-					, 'timeout' => 10 // timeout in seconds
+					, 'timeout' => DEFAULT_TIMEOUT // timeout in seconds
 					, 'mapping' => array(
 						array(self::PARAM_LBL=>'The submitter name',self::PARAM_SRC=>'your-name', self::PARAM_3RD=>'name')
 						, array(self::PARAM_LBL=>'The email address', self::PARAM_SRC=>'your-email', self::PARAM_3RD=>'email')
@@ -400,7 +405,7 @@ class Forms3rdPartyIntegration {
 
 			//remote call
 			//@see http://planetozh.com/blog/2009/08/how-to-make-http-requests-with-wordpress/
-			$response = wp_remote_post( $service['url'], array('timeout' => $service['timeout'],'body'=>$post) );
+			$response = wp_remote_post( $service['url'], array('timeout' => empty($service['timeout']) ? self::DEFAULT_TIMEOUT : $service['timeout'],'body'=>$post) );
 	
 			### pbug(__LINE__.':'.__FILE__, '	response from '.$service['url'], $response);
 			
