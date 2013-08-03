@@ -125,7 +125,7 @@ class Forms3rdPartyIntegration {
 					, 'success'=>''
 					, 'forms' => array()
 					, 'hook' => false
-					, 'timeout' => DEFAULT_TIMEOUT // timeout in seconds
+					, 'timeout' => self::DEFAULT_TIMEOUT // timeout in seconds
 					, 'mapping' => array(
 						array(self::PARAM_LBL=>'The submitter name',self::PARAM_SRC=>'your-name', self::PARAM_3RD=>'name')
 						, array(self::PARAM_LBL=>'The email address', self::PARAM_SRC=>'your-email', self::PARAM_3RD=>'email')

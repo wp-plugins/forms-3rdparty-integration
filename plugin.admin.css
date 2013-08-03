@@ -1,5 +1,7 @@
 .invisible { position:absolute; left:-9999px; }
 
+form { margin-bottom: 2em; }
+
 div.shortcode-description { border:1px solid #DFDFDF; border-radius:5px; background:#fff; }
 
 .collapsed .inside { display:none; }

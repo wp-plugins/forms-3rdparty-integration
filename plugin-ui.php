@@ -34,7 +34,7 @@
 	$forms = apply_filters($this->N('select_forms'), array());
 
 ?>
-		<div id="<?php echo $P?>" class="wrap metabox-holder"><div id="poststuff" class="meta-box-sortables">
+		<div id="<?php echo $P?>" class="wrap metabox-holder"><div id="poststuff">
 		
 		<h2><?php _e(self::pluginPageTitle);?> &mdash; <?php _e('Settings');?></h2>
 		<div class="description">
@@ -71,6 +71,7 @@
 			</div>
 		</div></fieldset>
 		
+		<div class="meta-box-sortables">
 		<?php
 		// make sure we have at least one
 		if( empty($options) ){
@@ -232,26 +233,28 @@
 			
 			</div><?php /*-- end div.description-body inside  --*/ ?>
 			
-		</div>
-		</div>
+		</div><!-- .postbox -->
+		</div><!-- .meta-box -->
 		<?php
 		endforeach;	//loop through option groups
 		?>
+		</div><!-- .meta-box-sortables -->
 
 			<div class="buttons">
-				<input type="submit" id="submit" name="submit" value="Save" />
+				<input type="submit" id="submit" name="submit" class="button button-primary" value="Save" />
 			</div>
 				
 		</form>
 
-		<div class="postbox">
-			<h3 class="hndle"><span>Examples of callback hooks.</span></h3>
-			<div class="description-body inside">
+		<div class="last-box">
+			<div class="postbox">
+				<h3 class="hndle"><span>Examples of callback hooks.</span></h3>
+				<div class="description-body inside">
 
-		<section class="info callback">
-			<p>You can also see examples in the plugin folder <code>3rd-Parties</code>.</p>
-			<h4>Action</h4>
-			<pre>
+			<section class="info callback">
+				<p>You can also see examples in the plugin folder <code>3rd-Parties</code>.</p>
+				<h4>Action</h4>
+				<pre>
 /**
  * Callback hook for 3rd-party service XYZ
  * @param $response the remote-request response (in this case, it's a serialized string)
@@ -270,10 +273,10 @@ public function service1_action_callback($response, &$results){
 		$results['errors'] = array($ex->getMessage());
 	}
 }//--	function service1_action_callback
-			</pre>
-			
-			<h4>Filter</h4>
-			<pre>
+				</pre>
+				
+				<h4>Filter</h4>
+				<pre>
 /**
  * Apply filters to integration fields
  * so that you could say "current_visitor={IP}" and dynamically retrieve the visitor IP
@@ -301,11 +304,12 @@ public function service1_filter_callback($values, &$service, &$cf7){
 	
 	return $values;
 }//--	function multitouch1_filter
-			</pre>
-		</section>
-		
-			</div><!-- .inside -->
-		</div><!-- .postbox -->
+				</pre>
+			</section>
+			
+				</div><!-- .inside -->
+			</div><!-- .postbox -->
+		</div><!-- .meta-box -->
 		
 		<!-- 
 		<div class="meta-box postbox" id="emptybox">
@@ -318,4 +322,4 @@ public function service1_filter_callback($values, &$service, &$cf7){
 		</div>
 		 -->
 		
-		</div><!-- //div.meta-box-sortables --></div><!--  //div#plugin.wrap -->
+		</div><!-- //#post-stuff --></div><!--  //div#plugin.wrap -->
