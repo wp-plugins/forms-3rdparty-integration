@@ -39,8 +39,8 @@
 		<h2><?php _e(self::pluginPageTitle);?> &mdash; <?php _e('Settings');?></h2>
 		<div class="description">
 			<p><?php _e('Set options for 3rd-party integration', $P); ?>.</p>
-			<p><?php _e('Map each CF7 field to its corresponding field in the 3rd-Party service', $P); ?>.</p>
-			<p><?php _e('If you need to submit a value directly, check the &quot;Is Value?&quot; box and enter the value for the <em>CF7 Field</em> column', $P); ?>.</p>
+			<p><?php _e('Map each Form plugin field to its corresponding field in the 3rd-Party service', $P); ?>.</p>
+			<p><?php _e('If you need to submit a value directly, check the &quot;Is Value?&quot; box and enter the value for the <em>Form plugin Field</em> column', $P); ?>.</p>
 		</div>
 		
 		<form method="post">
@@ -114,7 +114,7 @@
 						<label for="forms-<?php echo $eid?>">Attach to Forms</label>
 						<?php
 							// print various forms
-							$this->form_select_input($forms, $eid, $entity['forms']);
+							$this->form_select_input($forms, $eid, isset($entity['forms']) ? $entity['forms'] : '');
 						?>
 						<em class="description"><?php _e('Choose which forms submit to this service', $P);?>.</em>
 					</div>
@@ -137,6 +137,10 @@
 					</div>
 				</div>
 			</fieldset><!-- Service -->
+
+			<?php
+			do_action($this->N('service_settings'), $eid, $P, $entity);
+			?>
 
 			<fieldset><legend><span>Mapping</span></legend>
 				<table class="mappings inside">
@@ -206,7 +210,7 @@
 				</table>
 			</fieldset><!-- Mappings -->
 			
-			<section class="info example hook-example">
+			<section class="info example hook-example<?php if(!isset($entity['hook']) || empty($entity['hook'])) echo ' collapsed'?>">
 			<fieldset><legend><span>Hooks</span></legend>
 				<div class="inside">
 					<div class="description">
@@ -221,7 +225,7 @@
 					<div>
 						<label for="hook-exf-<?php echo $eid; ?>">WP Input Filter:</strong>
 						<input style="width:500px;" name="hook-exf[<?php echo $eid; ?>]" id="hook-exf-<?php echo $eid; ?>" class="code example" value="<?php echo esc_attr("add_filter('{$P}_service_filter_post_{$eid}', array(&\$this, 'YOUR_FILTER'), 10, 4);"); ?>" readonly="readonly" />
-						<em class="description">used to alter static inputs (the CF7 field)</em>
+						<em class="description">used to alter static inputs (the Form plugin field)</em>
 					</div>
 				</div>
 			</fieldset><!-- Hooks -->
@@ -237,7 +241,10 @@
 		</div><!-- .meta-box -->
 		<?php
 		endforeach;	//loop through option groups
+
+		do_action($this->N('service_metabox'), $P, $options);
 		?>
+
 		</div><!-- .meta-box-sortables -->
 
 			<div class="buttons">

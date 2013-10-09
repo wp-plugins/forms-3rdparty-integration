@@ -2,16 +2,17 @@
 /*
 
 Plugin Name: Forms: 3rd-Party Integration
-Plugin URI: http://drzaus.com/plugins/forms-3rdparty
+Plugin URI: https://github.com/zaus/forms-3rdparty-integration
 Description: Send plugin Forms Submissions (Gravity, CF7, etc) to a 3rd-party URL
 Author: zaus, atlanticbt, skane
-Version: 1.4.3
+Version: 1.4.4
 Author URI: http://drzaus.com
 Changelog:
 	1.4 - forked from cf7-3rdparty.  Removed 'hidden field plugin'.
 	1.4.1 - minor cleanup, bugfixes; added 'label' and 'drag' columns to admin ui.
 	1.4.2 - bugfixes (CF7, empty admin sections), admin JS cleanup, timeout
 	1.4.3 - cleaning up admin JS, plugin header warning
+	1.4.4 - protecting against non-attached forms; github issue link; extra hooks
 */
 
 //declare to instantiate
@@ -35,7 +36,7 @@ class Forms3rdPartyIntegration {
 	 * Version of current plugin -- match it to the comment
 	 * @var string
 	 */
-	const pluginVersion = '1.4.3';
+	const pluginVersion = '1.4.4';
 
 	
 	/**
@@ -357,6 +358,8 @@ class Forms3rdPartyIntegration {
 		//loop services
 		foreach($settings as $sid => $service):
 			//check if we're supposed to use this service
+			if( !isset($service['forms']) || empty($service['forms']) ) continue; // nothing provided
+
 			$use_this_form = apply_filters($this->N('use_form'), false, $form, $sid, $service['forms']);
 
 			### _log('are we using this form?', $use_this_form ? "YES" : "NO", $sid, $service);
@@ -400,6 +403,7 @@ class Forms3rdPartyIntegration {
 			
 			//extract special tags;
 			$post = apply_filters($this->N('service_filter_post_'.$sid), $post, $service, $form);
+			$post = apply_filters($this->N('service_filter_post'), $post, $service, $form, $sid);
 			
 			### _log(__LINE__.':'.__FILE__, '	sending post to '.$service['url'], $post);
 
@@ -438,14 +442,18 @@ class Forms3rdPartyIntegration {
 			if($can_hook && isset($service['hook']) && $service['hook']){
 				### _log('performing hooks for:', $this->N.'_service_'.$sid);
 				
+				//hack for pass-by-reference
 				//holder for callback return results
 				$callback_results = array('success'=>false, 'errors'=>false, 'attach'=>'', 'message' => '');
-				//hack for pass-by-reference
+				// TODO: use object?
 				$param_ref = array();	foreach($callback_results as $k => &$v){ $param_ref[$k] = &$v; }
 				
 				//allow hooks
 				do_action($this->N('service_a'.$sid), $response['body'], $param_ref);
+				do_action($this->N('service'), $response['body'], $param_ref, $sid);
 				
+				### _log('after success', $form);
+
 				//check for callback errors; if none, then attach stuff to message if requested
 				if(!empty($callback_results['errors'])){
 					$failMessage = array(
@@ -456,7 +464,7 @@ class Forms3rdPartyIntegration {
 				}
 				else {
 					### _log('checking for attachments', print_r($callback_results, true));
-					do_action($this->N('remote_success'), $callback_results, $form, $service);
+					$form = apply_filters($this->N('remote_success'), $form, $callback_results, $service);
 				}
 			}// can hook
 			

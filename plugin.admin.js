@@ -55,7 +55,7 @@
 		,
 		afterClone: {
 			row: function($target, $clone, newid) {
-				lib.updateClonedRow(newid, $clone, /(mapping\]\[)([\d])/);
+				lib.updateClonedRow(newid, $clone, /(mapping\]\[)([\d]+)/);
 			}//--	fn	afterClone.row
 			,
 			metabox: function($target, $clone, newid) {
@@ -64,10 +64,8 @@
 				var $title = $clone.find('h3 span:last');
 				$title.html( $title.html().split(':')[0] );
 
-				// toggle hooks appropriately
-				$clone.find('.hook-example').removeClass('collapsed');
-				lib.hookToggleInit( $clone.find('input.hook') );
-				
+				// toggle hooks appropriately -- since the next call will 'reset' all fields, force collapsed
+				$clone.find('.hook-example').addClass('collapsed');
 				
 				//reset clone values and update indices
 				lib.updateClonedRow(newid, $clone, /(\[)([\d])/);
@@ -83,7 +81,7 @@
 					;
 				
 				$o.attr('id', id[0]+'-'+newid);
-				$o.attr('name', name.replace(regex, '$1'+newid));
+				$o.attr('name', name.replace(regex, '$1' + newid));
 				
 				//reset values
 				if( $o.attr('type') != 'checkbox' ){
@@ -100,11 +98,6 @@
 				$o.attr('for', $o.siblings('input').attr('id'));
 			});
 		}//--	fn	lib.updateClonedRow
-		,
-		hookToggleInit: function($input) {
-			/// // should fire appropriate toggle action to close if option is disabled
-			$input.trigger('change');
-		}//--	fn	hookToggleInit
 	};
 
 	$(function() {
@@ -123,12 +116,6 @@
 			.addClass('collapsed')
 			.find('h3').prepend('<span class="actn" data-actn="toggle" data-rel=".postbox">[+]</span> ')
 			;
-
-		// toggle hooks element
-		$plugin.find('input.hook').each(function(i,o) {
-			var $o = $(o);
-			if(!$o.is(':checked')) lib.hookToggleInit($o);
-		});
 
 		// sortable
 		$plugin.find('table.mappings tbody').sortable({
