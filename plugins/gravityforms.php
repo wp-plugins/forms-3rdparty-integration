@@ -155,6 +155,35 @@ class Forms3rdpartyIntegration_Gf {
 		return $form;
 	}
 
+	private function update_confirmation($confirmation, $nice_message, $service) {
+
+		if(empty($service['failure'])) {
+			$failure = $confirmation['type'] == 'message'
+				? $confirmation['message']
+				: $nice_message;
+		}
+		else $failure = sprintf(
+			__($service['failure'], Forms3rdPartyIntegration::$instance->N())
+			, $confirmation['message'] // technically we don't want this for redirect...just don't set it then
+			, __($nice_message, Forms3rdPartyIntegration::$instance->N())
+			);
+
+		switch($confirmation['type']) {
+			case 'message':
+				// use both html and newlines just in case auto-formatting is disabled
+				$confirmation['message'] = $failure;
+				break;
+			case 'redirect':
+				$confirmation['queryString'] .= '&response_failure=' . urlencode($failure);
+				break;
+			case 'page':
+				/// ???
+				// all we have is the page id
+				break;
+		}
+		return $confirmation;
+	}
+
 	/**
 	 * Add a javascript warning for failures; also send an email to debugging recipient with details
 	 * parameters passed by reference mostly for efficiency, not actually changed (with the exception of $form)
@@ -168,19 +197,13 @@ class Forms3rdpartyIntegration_Gf {
 	 */
 	public function remote_failure($form, $debug, $service, $post, $response){
 		//notify frontend
-		$nice_message = 'Failed submitting to '.$service['name'].': '.$response['safe_message'];
+
 		// http://www.gravityhelp.com/documentation/page/Confirmation
 
-		switch($form['confirmation']['type']) {
-			case 'message':
-				$form['confirmation']['message'] .= '<br />' . $nice_message;
-				break;
-			case 'redirect':
-				$form['confirmation']['queryString'] .= '&response_failure=' . urlencode($nice_message);
-				break;
-			case 'page':
-				/// ???
-				break;
+		// what confirmation do we update? try them all to be safe?
+		$form['confirmation'] = $this->update_confirmation($form['confirmation'], $response['safe_message'], $service);
+		foreach($form['confirmations'] as $conf => &$confirmation) {
+			$confirmation = $this->update_confirmation($confirmation, $response['safe_message'], $service);
 		}
 		
 		//notify admin
@@ -204,9 +227,7 @@ class Forms3rdpartyIntegration_Gf {
 		//log if couldn't send debug email
 		if(!wp_mail( $debug['email'], $subject, $body, $headers )){
 			### $form->additional_settings .= "\n".'on_sent_ok: \'alert("Could not send debug warning '.$service['name'].'");\'';
-			if(function_exists('_log')):
-				_log(__LINE__.':'.__FILE__, '	response failed from '.$service['url'].', could not send warning email', $response);
-			endif;
+			error_log(__LINE__.':'.__FILE__ .'	response failed from '.$service['url'].', could not send warning email: ' . print_r($response, true));
 		}
 
 		return $form;
