@@ -77,6 +77,27 @@ This plugin includes another hidden field plugin for convenience from [Contact F
 
 [Contact Form 7 Modules: Hidden Fields]: http://wordpress.org/extend/plugins/contact-form-7-modules/ "Hidden Fields from CF7 Modules"
 
+= How do I map url parameters? =
+Use the "Dynamic Fields" plugin: http://wordpress.org/plugins/forms-3rdparty-dynamic-fields/
+Also at https://github.com/zaus/forms-3rdparty-dynamicfields
+
+= How do I show a custom message on the confirmation screen? =
+You can add custom messaging to the plugin's (GF or CF7) email or screen response with something like:
+
+    class MyPlugin {
+        public function MyPlugin() {
+            add_filter('Forms3rdPartyIntegration_service', array(&$this, 'adjust_response'), 10, 2);
+        }
+
+        public function adjust_response($body, $refs) {
+            // use 'attach' to inject to regular email
+            // use 'message' to inject to page
+            $refs['attach'] = 'custom message in email';
+            $refs['message'] = 'custom message on page';
+        }
+    }
+    new MyPlugin(); // attach hook
+
 == Screenshots ==
 
 __Please note these screenshots are from the previous plugin incarnation, but are still essentially valid.__
@@ -87,6 +108,11 @@ __Please note these screenshots are from the previous plugin incarnation, but ar
 
 
 == Changelog ==
+
+= 1.4.7 =
+* totally removing hidden field plugin -- seems like even though it wasn't referenced, it may have caused the "invalid header" error during install
+* admin ui - js fixes (configurable section icons via `data-icon`; entire metabox title now toggles accordion)
+* stripslashes on submission to fix apostrophes in 'failure response' textarea
 
 = 1.4.6 =
 * hook `...service_filter_args` to allow altering post headers, etc
